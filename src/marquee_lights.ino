@@ -57,121 +57,20 @@ void AnimUpdate(const AnimationParam& param)
 }
 #endif
 
-// class LED
-// {
-//   private:
-//     int x;
-//     int y;
-
-//   public:
-//     LED(int x = 0, int y = 0)
-//     {
-//       this->x = x;
-//       this->y = y;
-//     }
-//     int setX(int x)
-//     {
-//       this->x = x;
-//     }
-//     int setY(int y)
-//     {
-//       this->y = y;
-//     }
-//     int getX()
-//     {
-//       return x;
-//     }
-//     int getY()
-//     {
-//       return y;
-//     }
-
-// };
-
-// LED led[LED_COUNT];
 
 void setup() {
   // Start a serial and WiFi connection
   Serial.begin(115200);
-  Serial.println("Booting");
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-
-  // Check if WiFi connection is successful, if not restart ESP
-  while (WiFi.waitForConnectResult() != WL_CONNECTED)
-  {
-    Serial.println("Connection Failed! Rebooting...");
-    delay(5000);
-    ESP.restart();
-  }
-
-  // Set hostname of ESP
-  ArduinoOTA.setHostname("Marquee lights");
-
-  ArduinoOTA
-  .onStart([]()
-  {
-    String type;
-    if (ArduinoOTA.getCommand() == U_FLASH)
-      type = "sketch";
-    else
-      type = "filesystem";
-
-    Serial.println("Start updating " + type);
-  })
-  .onEnd([]()
-  {
-    Serial.println("\nEnd");
-  })
-  .onProgress([](unsigned int progress, unsigned int total)
-  {
-    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-  })
-  .onError([](ota_error_t error)
-  {
-    Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-    else if (error == OTA_END_ERROR) Serial.println("End Failed");
-  });
-
-  ArduinoOTA.begin();
-
-  Serial.println("Ready");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
 
   strip.Begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   strip.Show();            // Turn OFF all pixels ASAP
-  //  Serial.begin(9600);
-
-  // for (int i = 0 ; i < 100; i++)
-  // {
-  //   led[i].setY(i);
-  //   led[i].setX(0);
-  // }
-  // for (int i = 100; i < 180; i++)
-  // {
-  //   led[i].setY(100);
-  //   led[i].setX(i - 100);
-  // }
-  // for (int i = 180; i < LED_COUNT; i++)
-  // {
-  //   led[i].setY(i - 180);
-  //   led[i].setX(180);
-  // }
-
-
+  
 }
-// loop() function -- runs repeatedly as long as board is on ---------------
 
 float offset = 0;
 
 void loop() {
-  ArduinoOTA.handle();
-  
+    
   currentMillis = millis();
 
   if (currentMillis - 10 > previousMillis)
