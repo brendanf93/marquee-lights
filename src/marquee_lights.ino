@@ -1,23 +1,17 @@
 #include <NeoPixelBus.h>
 #include <NeoPixelAnimator.h>
-#include <WiFi.h>
-#include <ESPmDNS.h>
-#include <WiFiUdp.h>
-#include <ArduinoOTA.h>
 #include "config.h"
-
-const char* ssid = NETWORK;
-const char* password = PASS;
-
-long currentMillis = 0;
-long previousMillis = 0;
 
 // Which pin on the Arduino is connected to the NeoPixels?
 // On a Trinket or Gemma we suggest changing this to 1:
-#define LED_PIN    2
+#define LED_PIN 2
 
 // How many NeoPixels are attached to the Arduino?
 #define LED_COUNT 300
+
+float leds[LED_COUNT];
+
+uint8_t prefix[] = {'s','n','d'};
 
 // Declare our NeoPixel strip object:
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(LED_COUNT, LED_PIN);
@@ -30,15 +24,15 @@ NeoPixelAnimator animations(LED_COUNT, NEO_CENTISECONDS);
 // see below for an example
 struct MyAnimationState
 {
-  RgbColor StartingColor;  // the color the animation starts at
-  RgbColor EndingColor; // the color the animation will end at
+  RgbColor StartingColor;   // the color the animation starts at
+  RgbColor EndingColor;     // the color the animation will end at
   AnimEaseFunction Easeing; // the acceleration curve it will use
 };
 
 MyAnimationState animationState[PixelCount];
 // one entry per pixel to match the animation timing manager
 
-void AnimUpdate(const AnimationParam& param)
+void AnimUpdate(const AnimationParam &param)
 {
   // first apply an easing (curve) to the animation
   // this simulates acceleration to the effect
@@ -49,52 +43,47 @@ void AnimUpdate(const AnimationParam& param)
   // we use the blend function on the RgbColor to mix
   // color based on the progress given to us in the animation
   RgbColor updatedColor = RgbColor::LinearBlend(
-                            animationState[param.index].StartingColor,
-                            animationState[param.index].EndingColor,
-                            progress);
+      animationState[param.index].StartingColor,
+      animationState[param.index].EndingColor,
+      progress);
   // apply the color to the strip
   strip.SetPixelColor(param.index, updatedColor);
 }
 #endif
 
-
-void setup() {
-  // Start a serial and WiFi connection
+void setup()
+{
+  // Start a serial connection
   Serial.begin(115200);
 
-  strip.Begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
-  strip.Show();            // Turn OFF all pixels ASAP
-  
+  strip.Begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
+  strip.Show();  // Turn OFF all pixels ASAP
 }
 
-float offset = 0;
-
-void loop() {
-    
-  currentMillis = millis();
-
-  if (currentMillis - 10 > previousMillis)
+void loop()
+{
+  for(uint8_t i = 0; i < sizeof(prefix); i++)
   {
-    for (int i = 0; i < LED_COUNT; i ++)
-    {
-      float hue = (float)i / LED_COUNT + offset;
+    waitLoop: while(!Serial.available());;
 
+    if(prefix[i] == Serial.read()) continue;
 
-      if (hue > 1)
-      {
-        hue -= 1;
-      }
-      strip.SetPixelColor(i, HsbColor(hue, 1, 1));
-    }
-    strip.Show();
-
-    offset += 0.001;
-
-    if (offset > 1)
-    {
-      offset = 0;
-    }
-
-    previousMillis = currentMillis;
+    i = 0;
+    goto waitLoop;
   }
+
+  // Set all led values to zero
+  memset(leds, 0, LED_COUNT*sizeof(byte));
+
+  for (uint8_t i = 0; i < LED_COUNT; i++)
+  {
+    byte brightness;
+
+    while(!Serial.available())
+    brightness = Serial.read();
+
+    strip.SetPixelColor(i, HsbColor(1, 1, (float)(brightness/100)));
+  }
+  strip.Show();
+
 }
