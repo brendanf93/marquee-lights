@@ -5,6 +5,7 @@
 #include <NeoPixelBus.h>
 #include <NeoPixelAnimator.h>
 #include "config.h"
+#include "coordinates.h"
 
 const char* ssid = NETWORK;
 const char* password = PASS;
@@ -17,9 +18,8 @@ long previousMillis = 0;
 #define LED_PIN 2
 
 // How many NeoPixels are attached to the Arduino?
-#define LED_COUNT 300
+#define LED_COUNT 821
 
-int leds[LED_COUNT];
 float offset = 0;
 
 // Declare our NeoPixel strip object:
@@ -69,159 +69,195 @@ class Pixel
 
 
 Pixel L[177];
-Pixel O[164];
+Pixel O[160];
+Pixel V[233];
+Pixel E[251];
+
+Pixel pixels[LED_COUNT];
+
+// Offset values are max from previous + previous offset + offset amount
+float o_offset = 32 + 5;
+float v_offset = 30 + o_offset + 5;
+float e_offset = 31.75 + v_offset + 5;
 
 void letter_setup()
 {
   // L
-  for (int i = 0; i < 57; i++)
+  for(int i = 0; i < 177; i++)
   {
-    L[i].x = 0;
-    L[i].y = i;
-  }
-  for (int i = 57; i < 66; i++)
-  {
-    L[i].x = i - 56;
-    L[i].y = 56;
-  }
-  for (int i = 66; i < 114; i++)
-  {
-    L[i].x = 10;
-    L[i].y = 56 - (i - 66);
-  }
-  for (int i = 114; i < 136; i++)
-  {
-    L[i].x = 10 + (i - 114);
-    L[i].y = 8;
-  }
-  for (int i = 136; i < 145; i++)
-  {
-    L[i].x = 32;
-    L[i].y = 8 - (i - 136);
-  }
-  for (int i = 145; i < LED_COUNT; i++)
-  {
-    L[i].x = 32 - (i - 145);
-    L[i].y = 0;
+    L[i].x = XL[i];
+    L[i].y = YL[i];
   }
 
   // O
-  for (int i = 0; i < 49; i++)
+  for(int i = 0; i < 160; i++)
   {
-    //
-  }
-  for (int i = 49; i < 53; i++)
-  {
-    //
-  }
-  for (int i = 53; i < 78; i++)
-  {
-    //
-  }
-  for (int i = 78; i < 82; i++)
-  {
-    //
-  }
-  for (int i = 82; i < 131; i++)
-  {
-    //
-  }
-  for (int i = 131; i < 135; i++)
-  {
-    //
-  }
-  for (int i = 135; i < 160; i++)
-  {
-    //
-  }
-  for (int i = 160; i < 164; i++)
-  {
-    //
+    O[i].x = XO[i] + o_offset;
+    O[i].y = YO[i];
   }
 
   // V
-  for (int i = 0; i < 58; i++)
+  for(int i = 0; i < 233; i++)
   {
-    //
-  }
-  for (int i = 58; i < 68; i++)
-  {
-    //
-  }
-  for (int i = 68; i < 112; i++)
-  {
-    //
-  }
-  for (int i = 112; i < 155; i++)
-  {
-    //
-  }
-  for (int i = 155; i < 165; i++)
-  {
-    //
-  }
-  for (int i = 165; i < 224; i++)
-  {
-    //
-  }
-  for (int i = 224; i < 233; i++)
-  {
-    //
+    V[i].x = XV[i] + v_offset;
+    V[i].y = YV[i];
   }
 
   // E
-  for (int i = 0; i < 57; i++)
+  for(int i = 0; i < 251; i++)
   {
-    //
+    E[i].x = XE[i] + e_offset;
+    E[i].y = YE[i];
   }
-  for (int i = 57; i < 68; i++)
-  {
-    //
-  }
-  for (int i = 68; i < 89; i++)
-  {
-    //
-  }
-  for (int i = 89; i < 99; i++)
-  {
-    //
-  }
-  for (int i = 99; i < 119; i++)
-  {
-    //
-  }
-  for (int i = 119; i < 131; i++)
-  {
-    //
-  }
-  for (int i = 131; i < 149; i++)
-  {
-    //
-  }
-  for (int i = 149; i < 159; i++)
-  {
-    //
-  }
-  for (int i = 159; i < 177; i++)
-  {
-    //
-  }
-  for (int i = 177; i < 189; i++)
-  {
-    //
-  }
-  for (int i = 189; i < 209; i++)
-  {
-    //
-  }
-  for (int i = 209; i < 218; i++)
-  {
-    //
-  }
-  for (int i = 218; i < 251; i++)
-  {
-    //
-  }
+  
+//  for (int i = 0; i < 57; i++)
+//  {
+//    L[i].x = 0;
+//    L[i].y = i;
+//  }
+//  for (int i = 57; i < 66; i++)
+//  {
+//    L[i].x = i - 56;
+//    L[i].y = 56;
+//  }
+//  for (int i = 66; i < 114; i++)
+//  {
+//    L[i].x = 10;
+//    L[i].y = 56 - (i - 66);
+//  }
+//  for (int i = 114; i < 136; i++)
+//  {
+//    L[i].x = 10 + (i - 114);
+//    L[i].y = 8;
+//  }
+//  for (int i = 136; i < 145; i++)
+//  {
+//    L[i].x = 32;
+//    L[i].y = 8 - (i - 136);
+//  }
+//  for (int i = 145; i < LED_COUNT; i++)
+//  {
+//    L[i].x = 32 - (i - 145);
+//    L[i].y = 0;
+//  }
+//
+//  // O
+//  for (int i = 0; i < 49; i++)
+//  {
+//    //
+//  }
+//  for (int i = 49; i < 53; i++)
+//  {
+//    //
+//  }
+//  for (int i = 53; i < 78; i++)
+//  {
+//    //
+//  }
+//  for (int i = 78; i < 82; i++)
+//  {
+//    //
+//  }
+//  for (int i = 82; i < 131; i++)
+//  {
+//    //
+//  }
+//  for (int i = 131; i < 135; i++)
+//  {
+//    //
+//  }
+//  for (int i = 135; i < 160; i++)
+//  {
+//    //
+//  }
+//  for (int i = 160; i < 164; i++)
+//  {
+//    //
+//  }
+//
+//  // V
+//  for (int i = 0; i < 58; i++)
+//  {
+//    //
+//  }
+//  for (int i = 58; i < 68; i++)
+//  {
+//    //
+//  }
+//  for (int i = 68; i < 112; i++)
+//  {
+//    //
+//  }
+//  for (int i = 112; i < 155; i++)
+//  {
+//    //
+//  }
+//  for (int i = 155; i < 165; i++)
+//  {
+//    //
+//  }
+//  for (int i = 165; i < 224; i++)
+//  {
+//    //
+//  }
+//  for (int i = 224; i < 233; i++)
+//  {
+//    //
+//  }
+//
+//  // E
+//  for (int i = 0; i < 57; i++)
+//  {
+//    //
+//  }
+//  for (int i = 57; i < 68; i++)
+//  {
+//    //
+//  }
+//  for (int i = 68; i < 89; i++)
+//  {
+//    //
+//  }
+//  for (int i = 89; i < 99; i++)
+//  {
+//    //
+//  }
+//  for (int i = 99; i < 119; i++)
+//  {
+//    //
+//  }
+//  for (int i = 119; i < 131; i++)
+//  {
+//    //
+//  }
+//  for (int i = 131; i < 149; i++)
+//  {
+//    //
+//  }
+//  for (int i = 149; i < 159; i++)
+//  {
+//    //
+//  }
+//  for (int i = 159; i < 177; i++)
+//  {
+//    //
+//  }
+//  for (int i = 177; i < 189; i++)
+//  {
+//    //
+//  }
+//  for (int i = 189; i < 209; i++)
+//  {
+//    //
+//  }
+//  for (int i = 209; i < 218; i++)
+//  {
+//    //
+//  }
+//  for (int i = 218; i < 251; i++)
+//  {
+//    //
+//  }
 
 }
 
@@ -230,7 +266,7 @@ void letter_setup()
 
 void setup()
 {
-  //  letter_setup();
+  letter_setup();
   Serial.begin(115200);
   Serial.println("Booting");
   WiFi.mode(WIFI_STA);
@@ -290,7 +326,7 @@ void setup()
 }
 
 float val = 0.0005;
-float c = 0.83;
+float c;
 
 void loop()
 {
@@ -298,22 +334,29 @@ void loop()
 
   currentMillis = millis();
 
-  if (currentMillis - 10 > previousMillis)
+  for(int i = 0; i < 177; i++)
   {
-    for (int i = 0; i < 233; i++)
-    {
-      strip.SetPixelColor(i,HsbColor(c,1,0.5));
-    }
-    strip.Show();
-
-    c += val;
-
-    if(c > 0.9 || c < 0.76)
-    {
-      val *= -1;
-    }
-    
+    c = L[i].x/32.0; //140.75 // 140.75 is total x width with offsets
+    strip.SetPixelColor(i, HsbColor(c, 1, 0.2));
   }
+  strip.Show();
+
+//  if (currentMillis - 10 > previousMillis)
+//  {
+//    for (int i = 0; i < 233; i++)
+//    {
+//      strip.SetPixelColor(i,HsbColor(c,1,0.5));
+//    }
+//    strip.Show();
+//
+//    c += val;
+//
+//    if(c > 0.9 || c < 0.76)
+//    {
+//      val *= -1;
+//    }
+//    
+//  }
 
   //  for(int i = 0; i < LED_COUNT; i++)
   //  {
